@@ -36,18 +36,12 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
-          
-      - name: Get branch name (merge)
-        shell: bash
-        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
+      - name: Get branch name
+        env:
+          BRANCH_NAME: ${{ contains(${GITHUB_REF#refs/heads/})}}
+        run: echo ${BRANCH_NAME}
 
-      - name: Get branch name (pull request)
-        shell: bash
-        run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
-
-      - name: Debug
-        run: echo ${{ env.BRANCH_NAME }}
-      - name: testing${{BRANCH_NAME}}
+      - name: testing${BRANCH_NAME}
         run: echo "hello world"
         
         
