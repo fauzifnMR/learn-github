@@ -44,6 +44,10 @@ jobs:
       - name: testing${BRANCH_NAME}
         run: echo ${{ env.GITHUB_ENV }}
         
+      - name: testing${BRANCH_NAME} 2
+        run: echo ${GITHUB_ENV}
+        
+        
         
 
 
