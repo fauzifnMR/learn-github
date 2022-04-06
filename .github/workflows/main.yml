@@ -37,12 +37,12 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
       - name: Get branch name
-        env:
-          BRANCH_NAME: ${github.ref_name}
-        run: echo ${{ env.BRANCH_NAME}}
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
+        
 
       - name: testing${BRANCH_NAME}
-        run: echo "hello world"
+        run: echo ${{ env.GITHUB_ENV }}
         
         
 
