@@ -47,14 +47,9 @@ jobs:
 
       - name: Debug
         run: echo ${{ env.BRANCH_NAME }}
+      - name: testing${{BRANCH_NAME}}
+        run: echo "hello world"
         
-      - name: 'End To End Testing - MRTEST - Login'
-        if: always()
-        uses: cypress-io/github-action@v2
-        with:
-          working-directory: mrapp-front-automation
-          install-command: yarn
-          browser: chrome
-          spec: cypress/integration/features/mrtest/${{ env.BRANCH_NAME }}.feature
+        
 
 
