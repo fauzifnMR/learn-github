@@ -19,12 +19,14 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    container: cypress/browsers:node12.18.3-chrome87-ff82
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-
+      
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
@@ -45,5 +47,14 @@ jobs:
 
       - name: Debug
         run: echo ${{ env.BRANCH_NAME }}
+        
+      - name: 'End To End Testing - MRTEST - Login'
+        if: always()
+        uses: cypress-io/github-action@v2
+        with:
+          working-directory: mrapp-front-automation
+          install-command: yarn
+          browser: chrome
+          spec: cypress/integration/features/mrtest/${{ env.BRANCH_NAME }}.feature
 
 
