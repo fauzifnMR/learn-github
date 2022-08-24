@@ -49,7 +49,7 @@ jobs:
         with:
           path: ./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt
       - name: Echo package.json
-        run: echo "${{ steps.package.outputs.content }}
+        run: echo "${{ steps.package.outputs.content }}"
       - name: Get Matrix Feature Submodule 
         id: set-matrix-submodule
         run: |
