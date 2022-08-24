@@ -59,3 +59,32 @@ jobs:
           JOB_STRATEGY_MATRIX=$(node -e "let r=[];var f='${{ steps.package.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
           echo $JOB_STRATEGY_MATRIX
           echo "::set-output name=job-strategy-matrix::$JOB_STRATEGY_MATRIX"
+
+  get-feature-module:
+    if: ${{github.event.inputs.Module == 'all-module' && github.event.inputs.Submodule == 'all-submodule'}}
+    runs-on: ubuntu-latest
+    outputs:
+      matrixs: ${{ steps.set-matrix-submodule.outputs.matrix }}
+      foldersubmodule: ${{steps.set-variables.outputs.foldersubmodule}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Read package.json
+        id: package
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt
+      - name: Echo package.json
+        run: echo "${{ steps.package.outputs.content }}"
+      - name: Get Matrix Feature Submodule 
+        id: set-matrix-submodule
+        run: |
+          #!/bin/bash
+          pwd
+          ls
+          JOB_STRATEGY_MATRIX=$(node -e "let r=[];var f='${{ steps.package.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
+          echo $JOB_STRATEGY_MATRIX
+          echo "::set-output name=job-strategy-matrix::$JOB_STRATEGY_MATRIX"
