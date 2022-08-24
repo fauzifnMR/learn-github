@@ -46,6 +46,7 @@ jobs:
       - name: Get Matrix Feature Submodule 
         id: set-matrix-submodule
         run: |
+          #!/bin/bash
           pwd
           ls
           sudo su
