@@ -48,6 +48,7 @@ jobs:
         run: |
           pwd
           ls
+          sudo su
           JOB_STRATEGY_MATRIX_SUBMODULE=$(node -e "const fs = require('fs');let r=[];let data = fs.readFileSync(`./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt`, 'utf-8');var f=`${data.toString()}`.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}});for(let i = 0; i < f.length; i += chunkSize) {  const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
           echo $JOB_STRATEGY_MATRIX_SUBMODULE
           echo "::set-output name=job-strategy-matrix-module::$JOB_STRATEGY_MATRIX_SUBMODULE"
