@@ -43,13 +43,19 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
+      - name: Read package.json
+        id: package
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt'
+      - name: Echo package.json
+        run: echo "${{ steps.package.outputs.content }}
       - name: Get Matrix Feature Submodule 
         id: set-matrix-submodule
         run: |
           #!/bin/bash
           pwd
           ls
-          sudo su
-          JOB_STRATEGY_MATRIX_SUBMODULE=$(node -e "const fs = require('fs'); let r=[]; let data = fs.readFileSync(`'./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt'`, 'utf-8'); console.log(data); var f= `${data}`.toString().split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}});for(let i = 0; i < f.length; i += chunkSize) {  const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}")
-          echo $JOB_STRATEGY_MATRIX_SUBMODULE
-          echo "::set-output name=job-strategy-matrix-module::$JOB_STRATEGY_MATRIX_SUBMODULE"
+          JOB_STRATEGY_MATRIX=$(node -e "let r=[];var f='${{ steps.package.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
+          echo $JOB_STRATEGY_MATRIX
+          echo "::set-output name=job-strategy-matrix::$JOB_STRATEGY_MATRIX"
