@@ -1,50 +1,41 @@
-# This is a basic workflow to help you get started with Actions
+name: Run UI Automation Tests
 
-name: CI
+on: 
+  workflow_dispatch:
+    inputs:
+      Module:
+        required: true
+        type: choice
+        description: Module 
+        default: "all-module"
+        options:
+          - all-module
+          - patient
+          - home
+      Submodule:
+        required: true
+        type: string
+        default: "all-submodule"
+      Parallel-Number:
+        default: 4
+        required: true
 
-# Controls when the workflow will run
-on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+jobs:  
+  get-feature-submodule:
+    if: ${{github.event.inputs.Module != 'all-module'}} && ${{github.event.inputs.Submodule != 'all-submodule'}}
     runs-on: ubuntu-latest
-    container: cypress/browsers:node12.18.3-chrome87-ff82
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    outputs:
+      matrixs: ${{ steps.set-matrix-submodule.outputs.matrix }}
     steps:
-      - name: Checkout
+    - name: Checkout
         uses: actions/checkout@v2
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
-      - name: Get branch name
-        shell: bash
-        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
-        
-
-      - name: testing${BRANCH_NAME}
-        run: echo ${{ env.GITHUB_ENV }}
-        
-      - name: testing${BRANCH_NAME} 2
-        run: echo ${GITHUB_ENV}
-        
-        
-        
-
-
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - name: Get Matrix Feature Submodule 
+      id: set-matrix-submodule
+      run: |
+        cd module
+        JOB_STRATEGY_MATRIX_SUBMODULE=$(node -e "const fs = require('fs');let r=[];let name = './${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt';let data = fs.readFileSync(name, 'utf-8');var f=`${data.toString()}`.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}});for(let i = 0; i < f.length; i += chunkSize) {  const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
+        echo $JOB_STRATEGY_MATRIX_SUBMODULE
+        echo "::set-output name=job-strategy-matrix-module::$JOB_STRATEGY_MATRIX_SUBMODULE"
