@@ -52,7 +52,7 @@ jobs:
           #!/bin/bash
           pwd
           ls
-          JOB_STRATEGY_MATRIX_SUBMODUL=$(node -e "let r=[];var f='${{ steps.package-submodule.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
+          JOB_STRATEGY_MATRIX_SUBMODULE=$(node -e "let r=[];var f='${{ steps.package-submodule.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
           echo $JOB_STRATEGY_MATRIX_SUBMODULE
           echo "::set-output name=matrix-submodule::$JOB_STRATEGY_MATRIX_SUBMODULE"
       - name: Get Matrix Feature Module
