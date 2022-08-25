@@ -56,9 +56,9 @@ jobs:
           #!/bin/bash
           pwd
           ls
-          JOB_STRATEGY_MATRIX=$(node -e "let r=[];var f='${{ steps.package.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
-          echo $JOB_STRATEGY_MATRIX
-          echo "::set-output name=job-strategy-matrix::$JOB_STRATEGY_MATRIX"
+          JOB_STRATEGY_MATRIX_SUBMODUL=$(node -e "let r=[];var f='${{ steps.package.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
+          echo $JOB_STRATEGY_MATRIX_SUBMODULE
+          echo "::set-output name=job-strategy-matrix-submodule::$JOB_STRATEGY_MATRIX_SUBMODULE"
 
   get-feature-module:
     if: ${{github.event.inputs.Module == 'all-module' && github.event.inputs.Submodule == 'all-submodule'}}
@@ -85,6 +85,36 @@ jobs:
           #!/bin/bash
           pwd
           ls
-          JOB_STRATEGY_MATRIX=$(node -e "let r=[];var f='${{ steps.package.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
-          echo $JOB_STRATEGY_MATRIX
-          echo "::set-output name=job-strategy-matrix::$JOB_STRATEGY_MATRIX"
+          JOB_STRATEGY_MATRIX_MODULE=$(node -e "let r=[];var f='${{ steps.package.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
+          echo $JOB_STRATEGY_MATRIX_MODULE
+          echo "::set-output name=job-strategy-matrix-module::$JOB_STRATEGY_MATRIX_MODULE"
+
+
+  run-testing:
+    needs: [get-feature-module, get-feature-submodule]
+    runs-on: ubuntu-latest
+    strategy: 
+      matrix:
+        feature-module: ${{fromJson(needs.get-feature-module.outputs.job-strategy-matrix-module)}}
+        feature-submodule: ${{fromJson(needs.get-feature-submodule.outputs.job-strategy-matrix-submodule)}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: run test
+        run: |
+          if [ ${{github.event.inputs.Module == 'all-module' && github.event.inputs.Submodule == 'all-submodule' && github.event.inputs.Features == 'critical'}} ]; then
+            chmod +x gradlew
+            echo ${{matrix.feature-module}}
+          elif [ ${{github.event.inputs.Module != 'all-module' && github.event.inputs.Submodule == 'all-submodule'}} ]; then
+            chmod +x gradlew
+            echo ${{matrix.feature-submodule}}
+          elif [ ${{github.event.inputs.Module != 'all-module'  && github.event.inputs.Submodule != 'all-submodule'}} ]; then
+            chmod +x gradlew
+            echo ${{matrix.feature-module}}
+          else
+            chmod +x gradlew
+            echo ${{matrix.feature-submodule}}
+          fi
