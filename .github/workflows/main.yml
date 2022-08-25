@@ -34,7 +34,7 @@ jobs:
 
   get-feature-submodule:
     runs-on: ubuntu-latest
-    if: ${{ (github.event.inputs.Module != 'all-module') && (github.event.inputs.Submodule != 'all-submodule)'}}
+    if: ${{github.event.inputs.Module != 'all-module' && github.event.inputs.Submodule != 'all-submodule'}}
     outputs:
       matrixs: ${{ steps.set-matrix-submodule.outputs.matrix }}
       foldersubmodule: ${{steps.set-variables.outputs.foldersubmodule}}
@@ -62,7 +62,7 @@ jobs:
           echo "::set-output name=job-strategy-matrix-submodule::$JOB_STRATEGY_MATRIX_SUBMODULE"
 
   get-feature-module:
-    if: ${{ (github.event.inputs.Module == 'all-module') && (github.event.inputs.Submodule == 'all-submodule')}}
+    if: ${{github.event.inputs.Module == 'all-module' && github.event.inputs.Submodule == 'all-submodule'}}
     runs-on: ubuntu-latest
     outputs:
       matrixs: ${{ steps.set-matrix-submodule.outputs.matrix }}
@@ -92,7 +92,7 @@ jobs:
 
 
   run-testing:
-    needs: [get-feature-module, get-feature-submodule]
+    needs: [get-feature-module || get-feature-submodule]
     runs-on: ubuntu-latest
     strategy: 
       matrix:
