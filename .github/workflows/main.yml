@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix-submodule: ${{ steps.set-matrix-submodule.outputs.matrix-submodule }}
-      matrix-module: ${{ steps.set-matrix-module.outputs.matrix-submodule }}
+      matrix-module: ${{ steps.set-matrix-module.outputs.matrix-module }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -33,20 +33,20 @@ jobs:
         with:
           node-version: 16
       - name: Read Submodule
-        if: ${{github.event.inputs.Module != 'all-module' && github.event.inputs.Submodule != 'all-submodule'}}
+        # if: ${{github.event.inputs.Module != 'all-module' && github.event.inputs.Submodule != 'all-submodule'}}
         id: package-submodule
         uses: juliangruber/read-file-action@v1
         with:
           path: ./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt
 
-      - name: Read Module
-        if: ${{github.event.inputs.Module != 'all-module' && github.event.inputs.Submodule == 'all-submodule'}}
-        id: package-module
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: ./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt
+      # - name: Read Module
+      #   # if: ${{github.event.inputs.Module != 'all-module' && github.event.inputs.Submodule == 'all-submodule'}}
+      #   id: package-module
+      #   uses: juliangruber/read-file-action@v1
+      #   with:
+      #     path: ./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt
       - name: Get Matrix Feature Submodule 
-        if: ${{github.event.inputs.Module != 'all-module' && github.event.inputs.Submodule != 'all-submodule'}}
+        # if: ${{github.event.inputs.Module != 'all-module' && github.event.inputs.Submodule != 'all-submodule'}}
         id: set-matrix-submodule
         run: |
           #!/bin/bash
@@ -55,16 +55,16 @@ jobs:
           JOB_STRATEGY_MATRIX_SUBMODULE=$(node -e "let r=[];var f='${{ steps.package-submodule.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
           echo $JOB_STRATEGY_MATRIX_SUBMODULE
           echo "::set-output name=matrix-submodule::$JOB_STRATEGY_MATRIX_SUBMODULE"
-      - name: Get Matrix Feature Module
-        if: ${{github.event.inputs.Module != 'all-module' && github.event.inputs.Submodule == 'all-submodule'}} 
-        id: set-matrix-module
-        run: |
-          #!/bin/bash
-          pwd
-          ls
-          JOB_STRATEGY_MATRIX_MODULE=$(node -e "let r=[];var f='${{ steps.package-module.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
-          echo $JOB_STRATEGY_MATRIX_MODULE
-          echo "::set-output name=matrix-module::$JOB_STRATEGY_MATRIX_MODULE"
+      # - name: Get Matrix Feature Module
+      #   if: ${{github.event.inputs.Module != 'all-module' && github.event.inputs.Submodule == 'all-submodule'}} 
+      #   id: set-matrix-module
+      #   run: |
+      #     #!/bin/bash
+      #     pwd
+      #     ls
+      #     JOB_STRATEGY_MATRIX_MODULE=$(node -e "let r=[];var f='${{ steps.package-module.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
+      #     echo $JOB_STRATEGY_MATRIX_MODULE
+      #     echo "::set-output name=matrix-module::$JOB_STRATEGY_MATRIX_MODULE"
 
  
 
