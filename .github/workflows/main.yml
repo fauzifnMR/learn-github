@@ -71,7 +71,7 @@ jobs:
 
 
   run-testing:
-    needs: [starter]
+    needs: starter
     runs-on: ubuntu-latest
     strategy: 
       matrix:
@@ -87,13 +87,13 @@ jobs:
         run: |
           if [ ${{github.event.inputs.Module == 'all-module' && github.event.inputs.Submodule == 'all-submodule' && github.event.inputs.Features == 'critical'}} ]; then
             chmod +x gradlew
-            echo ${{matrix.feature-module}}
+            echo "${{matrix.feature-module}}"
           elif [ ${{github.event.inputs.Module != 'all-module' && github.event.inputs.Submodule == 'all-submodule'}} ]; then
             chmod +x gradlew
-            echo ${{matrix.feature-submodule}}
+            echo "${{matrix.feature-submodule}}"
           elif [ ${{github.event.inputs.Module != 'all-module'  && github.event.inputs.Submodule != 'all-submodule'}} ]; then
             chmod +x gradlew
-            echo ${{matrix.feature-module}}
+            echo "${{matrix.feature-module}}"
           else
             chmod +x gradlew
             echo ${{matrix.feature-submodule}}
