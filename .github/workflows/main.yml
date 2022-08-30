@@ -19,8 +19,38 @@ on:
 
 
 jobs:
+  vars:
+    runs-on: ubuntu-latest
+    outputs:
+      DBHost:             ${{steps.set-variables.outputs.DBHost}}
+      ClusterName:        ${{steps.set-variables.outputs.ClusterName}}
+      SeleniumURL:        ${{steps.set-variables.outputs.SeleniumURL}}
+      ref:                ${{steps.set-variables.outputs.ref}}
+      FeatureFolderName:  ${{steps.set-variables.outputs.FeatureFolderName}}
+      PropertiesFile:     ${{steps.set-variables.outputs.PropertiesFile}}
+      S3Bucket:           ${{steps.set-variables.outputs.S3Bucket}}
+      Role:               ${{steps.set-variables.outputs.Role}}
+      Env:                ${{steps.set-variables.outputs.Env}}
+      CucumberURL:        ${{steps.set-variables.outputs.CucumberURL}}
+    name: Set Variables
+    steps:
+    - id: set-variables
+      run: |
+        echo "::set-output name=DBHost::uitest-k8s-mrapp.cckpqea9knkk.ap-southeast-2.rds.amazonaws.com"
+        echo "::set-output name=ClusterName::mrtest-cluster"
+        echo "::set-output name=SeleniumURL::seleniumhub-uitest-k8s.test.medirecords.com"
+        echo "::set-output name=ref::dev"
+        echo "::set-output name=FeatureFolderName::mrtestuiautomation"
+        echo "::set-output name=PropertiesFile::uitest_chrome_k8s.properties"
+        echo "::set-output name=S3Bucket::s3://uitest.test.medirecords.com"
+        echo "::set-output name=Role::MRTEST_ASSUME_ROLE_ARN"
+        echo "::set-output name=Env::uitest"
+        echo "::set-output name=CucumberURL::https://uitest.test.medirecords.com/reports/selenium/${{github.run_number}}/smoke/overview-features.html"
+      
+
   apptest:
     uses: fauzifnMR/learn-github/.github/workflows/submodule.yml@main
+    needs: vars
     with:
       path: ./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt
       # Module: {{github.event.inputs.Module}}

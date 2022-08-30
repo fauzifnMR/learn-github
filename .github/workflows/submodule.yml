@@ -47,6 +47,6 @@ jobs:
           node-version: 16
       - name: run test
         run: |
-            chmod +x gradlew
             echo "${{matrix.feature-submodule}}"
+            echo "${{needs.vars.outputs.FeatureFolderName}}"
           
