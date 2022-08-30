@@ -11,7 +11,7 @@ jobs:
   starter:
     runs-on: ubuntu-latest
     outputs:
-      matrix-module: ${{steps.set-matrix-submodule.outputs.matrix-submodule}}
+      matrix-submodule: ${{steps.set-matrix-submodule.outputs.matrix-submodule}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
