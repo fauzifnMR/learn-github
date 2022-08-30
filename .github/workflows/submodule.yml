@@ -3,12 +3,6 @@ name: Submodule
 on: 
   workflow_call:
     inputs:
-      Module:
-        required: true
-        type: string
-      Submodule:
-        required: true
-        type: string
       path:
         type: string
         required: true
