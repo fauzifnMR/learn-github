@@ -6,6 +6,10 @@ on:
       path:
         type: string
         required: true
+      featureFolderName:
+        type: string
+        required: true
+    
 
 jobs:
   starter:
@@ -34,7 +38,7 @@ jobs:
           echo "::set-output name=matrix-submodule::$JOB_STRATEGY_MATRIX_SUBMODULE"
 
   run-testing:
-    needs: [starter, vars]
+    uses: fauzifnMR/learn-github/.github/workflows/main.yml@main
     runs-on: ubuntu-latest
     strategy: 
       matrix:
@@ -48,5 +52,4 @@ jobs:
       - name: run test
         run: |
             echo "${{matrix.feature-submodule}}"
-            echo "${{needs.vars.outputs.FeatureFolderName}}"
-          
+            echo "${{inputs.featureFolderName}}"

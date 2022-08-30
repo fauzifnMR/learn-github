@@ -53,6 +53,7 @@ jobs:
     needs: vars
     with:
       path: ./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt
+      featureFolderName:  ${{steps.set-variables.outputs.FeatureFolderName}}
       # Module: {{github.event.inputs.Module}}
       # SubModule: {{github.event.inputs.Submodule}}
 
