@@ -34,7 +34,7 @@ jobs:
           echo "::set-output name=matrix-submodule::$JOB_STRATEGY_MATRIX_SUBMODULE"
 
   run-testing:
-    needs: starter
+    needs: [starter, vars]
     runs-on: ubuntu-latest
     strategy: 
       matrix:
