@@ -38,7 +38,6 @@ jobs:
           echo "::set-output name=matrix-submodule::$JOB_STRATEGY_MATRIX_SUBMODULE"
 
   run-testing:
-    uses: fauzifnMR/learn-github/.github/workflows/main.yml@main
     runs-on: ubuntu-latest
     strategy: 
       matrix:
