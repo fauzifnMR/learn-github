@@ -16,6 +16,10 @@ on:
         required: true
         type: string
         default: "all-submodule"
+      Features:
+        type: string 
+        required: true
+        default: "critical"
 
 
 jobs:
@@ -54,6 +58,7 @@ jobs:
     with:
       path: ./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt
       featureFolderName:  ${{needs.vars.outputs.FeatureFolderName}}
+      Features: ${{github.event.inputs.Features}}
       # Module: {{github.event.inputs.Module}}
       # SubModule: {{github.event.inputs.Submodule}}
 

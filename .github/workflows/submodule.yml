@@ -9,6 +9,10 @@ on:
       featureFolderName:
         type: string
         required: true
+      Features:
+        type: string 
+        required: true
+        default: "critical"
     
 
 jobs:
@@ -33,9 +37,15 @@ jobs:
           #!/bin/bash
           pwd
           ls
-          JOB_STRATEGY_MATRIX_SUBMODULE=$(node -e "let r=[];var f='${{ steps.package-submodule.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/4); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
-          echo $JOB_STRATEGY_MATRIX_SUBMODULE
-          echo "::set-output name=matrix-submodule::$JOB_STRATEGY_MATRIX_SUBMODULE"
+          if  ${{github.event.inputs.Features != 'critical'; then
+            JOB_STRATEGY_MATRIX_SUBMODULE=$(node -e "let r=[];var f='${{ steps.package-submodule.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/4); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
+            echo $JOB_STRATEGY_MATRIX_SUBMODULE
+            echo "::set-output name=matrix-submodule::$JOB_STRATEGY_MATRIX_SUBMODULE"
+          else
+            JOB_STRATEGY_MATRIX_SUBMODULE=$(node -e "let r=[];var f='${{ inputs.features }}'.split(',');var chunkSize = Math.ceil(f.length/4); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
+            echo $JOB_STRATEGY_MATRIX_SUBMODULE
+            echo "::set-output name=matrix-submodule::$JOB_STRATEGY_MATRIX_SUBMODULE"
+          fi
 
   run-testing:
     needs: starter
