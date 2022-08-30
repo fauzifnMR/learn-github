@@ -20,7 +20,7 @@ on:
 
 jobs:
   apptest:
-    uses: fauzifnMR/learn-github/.github/submodule.yml@main
+    uses: fauzifnMR/learn-github/.github/workflows/submodule.yml@main
     with:
       path:  ./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt
       Module: {{github.event.inputs.Module}}
