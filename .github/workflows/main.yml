@@ -16,87 +16,15 @@ on:
         required: true
         type: string
         default: "all-submodule"
-      Parallel-Number:
-        default: 4
-        required: true
+
 
 jobs:
-  starter:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix-submodule: ${{ steps.set-matrix-submodule.outputs.matrix-submodule }}
-      matrix-module: ${{ steps.set-matrix-module.outputs.matrix-module }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - name: Read Submodule
-        id: package-submodule
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: ./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt
-
-      - name: Read Module
-        id: package-module
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: ./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt
-      - name: Get Matrix Feature Submodule 
-        id: set-matrix-submodule
-        run: |
-          #!/bin/bash
-          pwd
-          ls
-          JOB_STRATEGY_MATRIX_SUBMODULE=$(node -e "let r=[];var f='${{ steps.package-submodule.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
-          echo $JOB_STRATEGY_MATRIX_SUBMODULE
-          if [ $JOB_STRATEGY_MATRIX_SUBMODULE == '' ];then
-            $JOB_STRATEGY_MATRIX_SUBMODULE = ["airclaimnonqld_withage_lessthantwenty.feature"]
-          fi
-          echo "::set-output name=matrix-submodule::$JOB_STRATEGY_MATRIX_SUBMODULE"
-      - name: Get Matrix Feature Module
-        id: set-matrix-module
-        run: |
-          #!/bin/bash
-          pwd
-          ls
-          JOB_STRATEGY_MATRIX_MODULE=$(node -e "let r=[];var f='${{ steps.package-module.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/${{github.event.inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
-          echo $JOB_STRATEGY_MATRIX_MODULE
-          if [ $JOB_STRATEGY_MATRIX_MODULE == '' ];then
-            $JOB_STRATEGY_MATRIX_MODULE = ["airclaimnonqld_withage_lessthantwenty.feature"]
-          fi
-          echo "::set-output name=matrix-module::$JOB_STRATEGY_MATRIX_MODULE"
-
- 
+  apptest:
+    uses: fauzifnMR/learn-github/.github/submodule.yml
+    with:
+      path:  ./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt
+      Module: {{github.event.inputs.Module}}
+      SubModule: {{github.event.inputs.Submodule}}
 
 
-
-  run-testing:
-    needs: starter
-    runs-on: ubuntu-latest
-    strategy: 
-      matrix:
-        feature-module: ${{fromJson(needs.starter.outputs.matrix-module)}}
-        feature-submodule: ${{fromJson(needs.starter.outputs.matrix-submodule)}}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - name: run test
-        run: |
-          if [ ${{github.event.inputs.Module == 'all-module' && github.event.inputs.Submodule == 'all-submodule' && github.event.inputs.Features == 'critical'}} ]; then
-            chmod +x gradlew
-            echo "${{matrix.feature-module}}"
-          elif [ ${{github.event.inputs.Module != 'all-module' && github.event.inputs.Submodule == 'all-submodule'}} ]; then
-            chmod +x gradlew
-            echo "${{matrix.feature-submodule}}"
-          elif [ ${{github.event.inputs.Module != 'all-module'  && github.event.inputs.Submodule != 'all-submodule'}} ]; then
-            chmod +x gradlew
-            echo "${{matrix.feature-module}}"
-          else
-            chmod +x gradlew
-            echo ${{matrix.feature-submodule}}
-          fi
+    

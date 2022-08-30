@@ -1,0 +1,58 @@
+name: Submodule
+
+on: 
+  workflow_call:
+    inputs:
+      Module:
+        required: true
+        type: string
+      Submodule:
+        required: true
+        type: string
+      path:
+        type: string
+        required: true
+
+jobs:
+  starter:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix-module: ${{steps.set-matrix-submodule.outputs.matrix-submodule}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Read Submodule
+        id: package-submodule
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: {{inputs.path}}
+      - name: Get Matrix Feature Submodule 
+        id: set-matrix-submodule
+        run: |
+          #!/bin/bash
+          pwd
+          ls
+          JOB_STRATEGY_MATRIX_SUBMODULE=$(node -e "let r=[];var f='${{ steps.package-submodule.outputs.content }}'.split(',');var chunkSize = Math.ceil(f.length/4); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
+          echo $JOB_STRATEGY_MATRIX_SUBMODULE
+          echo "::set-output name=matrix-submodule::$JOB_STRATEGY_MATRIX_SUBMODULE"
+
+  run-testing:
+    needs: starter
+    runs-on: ubuntu-latest
+    strategy: 
+      matrix:
+        feature-submodule: ${{fromJson(needs.starter.outputs.matrix-submodule)}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: run test
+        run: |
+            chmod +x gradlew
+            echo "${{matrix.feature-submodule}}"
+          
