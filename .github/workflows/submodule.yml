@@ -22,7 +22,7 @@ jobs:
         id: package-submodule
         uses: juliangruber/read-file-action@v1
         with:
-          path: {{inputs.path}}
+          path: ${{inputs.path}}
       - name: Get Matrix Feature Submodule 
         id: set-matrix-submodule
         run: |
