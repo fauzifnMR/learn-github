@@ -32,7 +32,7 @@ on:
       Submodule:
         required: true
         type: string
-      MRAppArtifact
+      MRAppArtifact:
         required: true
         type: string
 
