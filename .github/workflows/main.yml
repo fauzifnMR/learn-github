@@ -89,6 +89,6 @@ jobs:
       path: ./module/critical.txt
       featureFolderName:  ${{needs.vars.outputs.FeatureFolderName}}
       Features: ${{inputs.Features}}
-      MRAppArtifact:      ${{inputs.MRAppArtifact}}
+      MRAppArtifact:      ${{needs.vars.outputs.MRAppArtifact}}
 
     
