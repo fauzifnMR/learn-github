@@ -20,6 +20,18 @@ on:
         type: string 
         required: true
         default: "critical"
+  workflow_call:
+    inputs:
+      Features:
+        type: string 
+        required: true
+        default: "critical"
+      Module:
+        required: true
+        type: string
+      Submodule:
+        required: true
+        type: string
 
 
 jobs:
@@ -53,14 +65,23 @@ jobs:
       
 
   apptest:
+    if: ${{inputs.Module != 'all-module' && inputs.Submodule != 'all-submodule' }}
     uses: fauzifnMR/learn-github/.github/workflows/submodule.yml@main
     needs: vars
     with:
-      path: ./module/${{github.event.inputs.Module}}/${{github.event.inputs.Submodule}}/${{github.event.inputs.Submodule}}.txt
+      path: ./module/${{inputs.Module}}/${{inputs.Submodule}}/${{inputs.Submodule}}.txt
       featureFolderName:  ${{needs.vars.outputs.FeatureFolderName}}
-      Features: ${{github.event.inputs.Features}}
-      # Module: {{github.event.inputs.Module}}
-      # SubModule: {{github.event.inputs.Submodule}}
+      Features: ${{inputs.Features}}
+      # Module: {{inputs.Module}}
+      # SubModule: {{inputs.Submodule}}
 
+  apptest2:
+    if: ${{inputs.Module == 'all-module' && inputs.Submodule == 'all-submodule' }}
+    uses: fauzifnMR/learn-github/.github/workflows/submodule.yml@main
+    needs: vars
+    with:
+      path: ./module/critical.txt
+      featureFolderName:  ${{needs.vars.outputs.FeatureFolderName}}
+      Features: ${{inputs.Features}}
 
     
