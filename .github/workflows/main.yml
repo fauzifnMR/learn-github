@@ -32,6 +32,9 @@ on:
       Submodule:
         required: true
         type: string
+      MRAppArtifact:
+        required: true
+        type: string
 
 
 jobs:
