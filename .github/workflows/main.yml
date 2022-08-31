@@ -48,6 +48,7 @@ jobs:
       Role:               ${{steps.set-variables.outputs.Role}}
       Env:                ${{steps.set-variables.outputs.Env}}
       CucumberURL:        ${{steps.set-variables.outputs.CucumberURL}}
+      MRAppArtifact:      ${{steps.set-variables.outputs.MRAppArtifact}}
     name: Set Variables
     steps:
     - id: set-variables
@@ -62,7 +63,7 @@ jobs:
         echo "::set-output name=Role::MRTEST_ASSUME_ROLE_ARN"
         echo "::set-output name=Env::uitest"
         echo "::set-output name=CucumberURL::https://uitest.test.medirecords.com/reports/selenium/${{github.run_number}}/smoke/overview-features.html"
-      
+        echo "::set-output name=MRAppArtifact::mrapp_dev.tar.gz"
 
   apptest:
     if: ${{inputs.Module != 'all-module' && inputs.Submodule != 'all-submodule' }}
@@ -83,5 +84,6 @@ jobs:
       path: ./module/critical.txt
       featureFolderName:  ${{needs.vars.outputs.FeatureFolderName}}
       Features: ${{inputs.Features}}
+      MRAppArtifact:      ${{inputs.MRAppArtifact}}
 
     

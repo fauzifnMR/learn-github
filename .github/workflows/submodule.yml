@@ -13,6 +13,9 @@ on:
         type: string 
         required: true
         default: "critical"
+      MRAppArtifact:
+        required: true
+        type: string
     
 
 jobs:
@@ -63,3 +66,4 @@ jobs:
         run: |
             echo "${{matrix.feature-submodule}}"
             echo "${{inputs.featureFolderName}}"
+            echo "{{inputs.MRAppArtifact}}"
