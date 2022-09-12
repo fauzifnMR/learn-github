@@ -60,9 +60,7 @@ jobs:
           pwd
           ls -a
           if ${{inputs.Module == 'all'  &&  inputs.Submodule == 'all' &&  inputs.Features == 'critical' }}; then
-            PATH_FEATURE=mrtest/critical
-            echo $PATH_FEATURE
-            echo "::set-output name=pathfeature::$PATH_FEATURE"
+            PATH_FEATURES=mrtest/critical node apptest.js
           elif ${{inputs.Module != 'all'  &&  inputs.Submodule != 'all' && (inputs.Features == 'all' || inputs.Features == 'critical')}}; then
             PATH_FEATURE=mrtest/${{inputs.Module}}/${{inputs.Submodule}} 
           elif ${{inputs.Module != 'all'  &&  inputs.Submodule == 'all' && (inputs.Features == 'all' || inputs.Features == 'critical')}}; then
@@ -71,18 +69,11 @@ jobs:
             PATH_FEATURE=mrtest 
           else
             touch filefeature.txt
-          fi
-      - id: runfileapp
-        run: |
-          ls -a
-          pwd
-          echo $PATH_FEATURE
-          if ${{inputs.Features == 'critical' || inputs.Features == 'all' }}; then
-            PATH_FEATURES=${{steps.getfeatures.outputs.pathfeature}} node apptest.js
-          else
             echo "${{inputs.Features}}" > filefeature.txt
           fi
       - name: read file
         run: |
           sudo su
+          pwd
+          ls -a
           cat filefeature.txt
