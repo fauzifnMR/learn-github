@@ -43,8 +43,7 @@ jobs:
     runs-on:
       ubuntu-latest
     outputs:
-      pathfeature: ${{steps.getfeatures.outputs.pathfeature}
-
+      pathfeature: ${{steps.getfeatures.outputs.pathfeature}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
