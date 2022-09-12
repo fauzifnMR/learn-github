@@ -14,7 +14,7 @@ const getFileList = (dirName) => {
   const txtFiles = files.filter((el) => path.extname(el) === ".feature");
   return txtFiles;
 };
-const feature = getFileList('./mrtest/home/').toString();
+const feature = getFileList(process.env.PATH_FEATURES).toString();
 fs.writeFile("filefeature.txt", feature, function (err) {
   if (err) {
     console.log(err);
