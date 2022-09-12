@@ -75,7 +75,7 @@ jobs:
           elif ${{inputs.Module != 'all'  &&  inputs.Submodule == 'all' && (inputs.Features == 'all' || inputs.Features == 'critical')}}; then
             PATH_FEATURES=mrtest/${{inputs.Module}} node apptest.js
           elif ${{inputs.Module == 'all'  &&  inputs.Submodule == 'all' &&  inputs.Features == 'all'}}; then
-            PATH_FEATURES=mrtest 
+            PATH_FEATURES=mrtest node apptest.js
           else
             touch filefeature.txt
             echo "${{inputs.Features}}" > filefeature.txt
