@@ -42,8 +42,8 @@ jobs:
   build:
     runs-on:
       ubuntu-latest
-
-      # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    outputs:
+      pathfeature: ${{steps.getfeatures.outputs.pathfeature}
 
     steps:
       - name: Checkout
@@ -58,7 +58,7 @@ jobs:
           npm install -g yarn
           sudo yarn install
           sudo yarn add custom-env
-      - name: create env file
+      - name: getfeatures
         run: |
           pwd
           ls -a
@@ -79,7 +79,7 @@ jobs:
           pwd
           echo $PATH_FEATURE
           if ${{inputs.Features == 'critical' || inputs.Features == 'all' }}; then
-            PATH_FEATURES='mrtest/critical' node apptest.js
+            node PATH_FEATURES=${{steps.getfeatures.outputs.pathfeature}} apptest.js
           else
             echo "${{inputs.Features}}" > filefeature.txt
           fi
