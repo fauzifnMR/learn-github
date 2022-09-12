@@ -14,7 +14,7 @@ const getFileList = (dirName) => {
   const txtFiles = files.filter((el) => path.extname(el) === ".feature");
   return txtFiles;
 };
-const feature = getFileList('learn-github/mrtest/critical').toString();
+const feature = getFileList('learn-github/mrtest/critical/').toString();
 fs.writeFile("filefeature.txt", feature, function (err) {
   if (err) {
     console.log(err);
