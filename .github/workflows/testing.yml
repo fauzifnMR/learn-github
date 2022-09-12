@@ -1,0 +1,87 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      Module:
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - home
+          - patinent
+          - all
+      Submodule:
+        required: true
+        default: "all"
+        type: string
+      Features:
+        required: true
+        default: "critical"
+        type: string
+
+  workflow_call:
+    inputs:
+      Module:
+        required: true
+        type: string
+        default: "all"
+      Submodule:
+        required: true
+        type: string
+        default: "all"
+      Features:
+        required: true
+        default: "critical"
+        type: string
+
+jobs:
+  build:
+    runs-on:
+      ubuntu-latest
+
+      # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+
+      - name: Install Yarn
+        run: |
+          npm install -g yarn
+          sudo yarn install
+          sudo yarn add custom-env
+      - name: create env file
+        run: |
+          pwd
+          if ${{inputs.Module == 'all'  &&  inputs.Submodule == 'all' &&  inputs.Features == 'critical' }}; then
+            PATH_FEATURE= mrtest/critical
+          elif ${{inputs.Module != 'all'  &&  inputs.Submodule != 'all' && (inputs.Features == 'all' || inputs.Features == 'critical')}}; then
+            PATH_FEATURE=mrtest/${{inputs.Module}}/${{inputs.Submodule}} 
+          elif ${{inputs.Module != 'all'  &&  inputs.Submodule == 'all' && (inputs.Features == 'all' || inputs.Features == 'critical')}}; then
+            PATH_FEATURE=mrtest/${{inputs.Module}} 
+          elif ${{inputs.Module == 'all'  &&  inputs.Submodule == 'all' &&  inputs.Features == 'all'}}; then
+            PATH_FEATURE=mrtest 
+          else
+            touch filefeature.txt
+          fi
+      - id: runfileapp
+        run: |
+          ls -a
+          pwd
+          if ${{inputs.Features == 'critical' || inputs.Features == 'all' }}; then
+            node PATH_FEATURES=PATH_FEATURE apptest.js
+          else
+            echo "${{inputs.Features}}" > filefeature.txt
+          fi
+      - name: read file
+        run: |
+          sudo su
+          cat filefeature.txt
