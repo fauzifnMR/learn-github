@@ -77,6 +77,7 @@ jobs:
         run: |
           ls -a
           pwd
+          echo $PATH_FEATURE
           if ${{inputs.Features == 'critical' || inputs.Features == 'all' }}; then
             PATH_FEATURES='mrtest/critical' node apptest.js
           else
