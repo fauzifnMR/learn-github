@@ -78,7 +78,7 @@ jobs:
           ls -a
           pwd
           if ${{inputs.Features == 'critical' || inputs.Features == 'all' }}; then
-            node PATH_FEATURES=PATH_FEATURE apptest.js
+            node apptest.js
           else
             echo "${{inputs.Features}}" > filefeature.txt
           fi
