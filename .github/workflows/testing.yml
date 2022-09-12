@@ -87,7 +87,6 @@ jobs:
           ls -a
           cat filefeature.txt
       - name: Get Feature File Scenarios
-        if: ${{inputs.Module == 'all'  &&  inputs.Submodule == 'all' &&  inputs.Features == 'critical' }};
         id: filescenarios
         uses: juliangruber/read-file-action@v1
         with:
@@ -99,3 +98,14 @@ jobs:
           pwd
           ls -a
           echo "${{steps.filescenarios.outputs.content}}"
+      - id: tetingnn
+        run: |
+          if ${{inputs.Features == 'critical' || inputs.Features == 'all' }}; then
+            JOB_STRATEGY_MATRIX=$(node -e "let r=[];var f='${{steps.filescenarios.outputs.content}}'.split(',');var chunkSize = Math.ceil(f.length/${{inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
+            echo $JOB_STRATEGY_MATRIX
+            echo "::set-output name=job-strategy-matrix::$JOB_STRATEGY_MATRIX"
+          else
+            JOB_STRATEGY_MATRIX=$(node -e "let r=[];var f='${{inputs.features}}'.split(',');var chunkSize = Math.ceil(f.length/${{inputs.Parallel-Number}}); for(let i = 0; i < f.length; i += chunkSize) { const chunk = f.slice(i, i + chunkSize); r.push(chunk.join(','))}; console.log(JSON.stringify(r))";)
+            echo $JOB_STRATEGY_MATRIX
+            echo "::set-output name=job-strategy-matrix::$JOB_STRATEGY_MATRIX"
+          fi
