@@ -45,6 +45,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Get Feature File Critical Scenarios
+        if: ${{inputs.Module == 'all'  &&  inputs.Submodule == 'all' &&  inputs.Features == 'critical' }};
+        id: filescenarios
+        uses: juliangruber/read-file-action@v1
+        with:
+            path: './module/critical.txt'
+
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
@@ -55,18 +62,21 @@ jobs:
           npm install -g yarn
           sudo yarn install
           sudo yarn add custom-env
+      
       - id: getfeatures
         run: |
           pwd
           ls -a
           if ${{inputs.Module == 'all'  &&  inputs.Submodule == 'all' &&  inputs.Features == 'critical' }}; then
-            PATH_FEATURES=mrtest/critical node apptest.js
+            PATH_FEATURES=${{steps.filescenarios.outputs.content}}
+            touch filefeature.txt
+            echo PATH_FEATURES >> filefeature.txt
           elif ${{inputs.Module != 'all'  &&  inputs.Submodule != 'all' && (inputs.Features == 'all' || inputs.Features == 'critical')}}; then
-            PATH_FEATURE=mrtest/${{inputs.Module}}/${{inputs.Submodule}} 
+            PATH_FEATURES=mrtest/${{inputs.Module}}/${{inputs.Submodule}} node apptest.js
           elif ${{inputs.Module != 'all'  &&  inputs.Submodule == 'all' && (inputs.Features == 'all' || inputs.Features == 'critical')}}; then
-            PATH_FEATURE=mrtest/${{inputs.Module}} 
+            PATH_FEATURES=mrtest/${{inputs.Module}} node apptest.js
           elif ${{inputs.Module == 'all'  &&  inputs.Submodule == 'all' &&  inputs.Features == 'all'}}; then
-            PATH_FEATURE=mrtest 
+            PATH_FEATURES=mrtest 
           else
             touch filefeature.txt
             echo "${{inputs.Features}}" > filefeature.txt
