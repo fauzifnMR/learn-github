@@ -63,13 +63,13 @@ jobs:
           pwd
           ls -a
           if ${{inputs.Module == 'all'  &&  inputs.Submodule == 'all' &&  inputs.Features == 'critical' }}; then
-            PATH_FEATURE= mrtest/critical
+            $PATH_FEATURE= 'mrtest/critical'
           elif ${{inputs.Module != 'all'  &&  inputs.Submodule != 'all' && (inputs.Features == 'all' || inputs.Features == 'critical')}}; then
-            PATH_FEATURE='mrtest/${{inputs.Module}}/${{inputs.Submodule}}' 
+            $PATH_FEATURE='mrtest/${{inputs.Module}}/${{inputs.Submodule}}' 
           elif ${{inputs.Module != 'all'  &&  inputs.Submodule == 'all' && (inputs.Features == 'all' || inputs.Features == 'critical')}}; then
-            PATH_FEATURE='mrtest/${{inputs.Module}}' 
+            $PATH_FEATURE='mrtest/${{inputs.Module}}' 
           elif ${{inputs.Module == 'all'  &&  inputs.Submodule == 'all' &&  inputs.Features == 'all'}}; then
-            PATH_FEATURE='mrtest' 
+            $PATH_FEATURE='mrtest' 
           else
             touch filefeature.txt
           fi
