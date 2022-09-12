@@ -68,9 +68,8 @@ jobs:
           pwd
           ls -a
           if ${{inputs.Module == 'all'  &&  inputs.Submodule == 'all' &&  inputs.Features == 'critical' }}; then
-            PATH_FEATURES="${{steps.filescenarios.outputs.content}}"
             touch filefeature.txt
-            echo PATH_FEATURES > filefeature.txt
+            echo "${{steps.filescenarios.outputs.content}}" > filefeature.txt
           elif ${{inputs.Module != 'all'  &&  inputs.Submodule != 'all' && (inputs.Features == 'all' || inputs.Features == 'critical')}}; then
             PATH_FEATURES=mrtest/${{inputs.Module}}/${{inputs.Submodule}} node apptest.js
           elif ${{inputs.Module != 'all'  &&  inputs.Submodule == 'all' && (inputs.Features == 'all' || inputs.Features == 'critical')}}; then
