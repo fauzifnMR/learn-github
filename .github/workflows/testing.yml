@@ -42,8 +42,6 @@ jobs:
   build:
     runs-on:
       ubuntu-latest
-    outputs:
-      pathfeature: ${{steps.getfeatures.outputs.pathfeature}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -57,12 +55,14 @@ jobs:
           npm install -g yarn
           sudo yarn install
           sudo yarn add custom-env
-      - name: getfeatures
+      - id: getfeatures
         run: |
           pwd
           ls -a
           if ${{inputs.Module == 'all'  &&  inputs.Submodule == 'all' &&  inputs.Features == 'critical' }}; then
             PATH_FEATURE=mrtest/critical
+            echo $PATH_FEATURE
+            echo "::set-output name=pathfeature::$PATH_FEATURE"
           elif ${{inputs.Module != 'all'  &&  inputs.Submodule != 'all' && (inputs.Features == 'all' || inputs.Features == 'critical')}}; then
             PATH_FEATURE=mrtest/${{inputs.Module}}/${{inputs.Submodule}} 
           elif ${{inputs.Module != 'all'  &&  inputs.Submodule == 'all' && (inputs.Features == 'all' || inputs.Features == 'critical')}}; then
@@ -78,7 +78,7 @@ jobs:
           pwd
           echo $PATH_FEATURE
           if ${{inputs.Features == 'critical' || inputs.Features == 'all' }}; then
-            node PATH_FEATURES=${{steps.getfeatures.outputs.pathfeature}} apptest.js
+            PATH_FEATURES=${{steps.getfeatures.outputs.pathfeature}} node apptest.js
           else
             echo "${{inputs.Features}}" > filefeature.txt
           fi
