@@ -97,6 +97,7 @@ jobs:
           sudo su
           pwd
           ls -a
+          tr -d '\n' < filefeature.txt
           echo "${{steps.filescenarios.outputs.content}}"
       - id: tetingnn
         run: |
