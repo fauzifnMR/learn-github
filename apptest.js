@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-require("dotenv").config();
+// require("dotenv").config();
 const getFileList = (dirName) => {
   let files = [];
   const items = fs.readdirSync(dirName, { withFileTypes: true });
